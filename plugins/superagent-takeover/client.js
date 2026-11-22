@@ -27,7 +27,7 @@ window.__ModuleLoader__.load({
       'panel.title': '接管',
       'panel.noFish': '没有在跑的鱼。',
       'panel.hidden': '还有 {n} 条收起来了',
-      'panel.t1': '停鱼',
+      'panel.t1': '停下这条鱼',
       'panel.waitReceipt': '回执：等我改完',
       'panel.doneReceipt': '回执：改完了',
     };
@@ -41,12 +41,11 @@ window.__ModuleLoader__.load({
       card: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 12,
         marginTop: 6,
-        padding: '8px 12px',
-        border: '1px solid var(--dsw-alias-border-l1)',
-        borderRadius: 6,
-        background: 'var(--dsw-alias-bg-layer-1)',
+        padding: '4px 0',
+        border: 'none',
+        background: 'transparent',
         color: 'var(--dsw-alias-label-primary)',
         fontFamily: 'inherit',
         fontSize: 13,
@@ -68,14 +67,14 @@ window.__ModuleLoader__.load({
       fishList: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 4,
       },
       fishRow: {
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
-        height: 28,
-        padding: '0 8px',
+        gap: 10,
+        height: 40,
+        padding: '4px 8px',
         borderRadius: 6,
         cursor: 'pointer',
         transition: 'background-color 150ms ease-out',
@@ -91,38 +90,42 @@ window.__ModuleLoader__.load({
         fontWeight: 500,
         lineHeight: '18px',
       },
-      dot: {
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
+      avatar: {
         flex: 'none',
-        display: 'inline-block',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 600,
+        lineHeight: 1,
+        color: 'var(--dsw-alias-label-primary)',
+        boxSizing: 'border-box',
       },
-      btn: {
+      actionBtn: {
         font: 'inherit',
         fontSize: 12,
-        fontWeight: 500,
+        fontWeight: 600,
         lineHeight: '16px',
-        padding: '4px 8px',
+        padding: '6px 12px',
         borderRadius: 6,
-        border: 'none',
-        background: 'transparent',
+        border: '1px solid var(--dsw-alias-border-l2)',
+        background: 'var(--dsw-alias-bg-layer-2)',
         color: 'var(--dsw-alias-label-primary)',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
         transition: 'background-color 150ms ease-out',
       },
-      btnDisabled: {
+      actionBtnDanger: {
+        border: '1px solid var(--dsw-alias-state-error-primary)',
+        color: 'var(--dsw-alias-state-error-primary)',
+      },
+      actionBtnDisabled: {
         opacity: 0.4,
         cursor: 'default',
       },
-      btnDanger: {
-        color: 'var(--dsw-alias-state-error-primary)',
-      },
-      btnRow: {
+      actionRow: {
         display: 'flex',
         gap: 4,
-        flexWrap: 'wrap',
+        alignItems: 'center',
       },
       status: {
         color: 'var(--dsw-alias-label-secondary)',
@@ -137,10 +140,54 @@ window.__ModuleLoader__.load({
     const HOVER_CSS =
       '.sa-tk-row:hover{background:var(--dsw-alias-bg-layer-2)}' +
       '.sa-tk-btn:hover{background:var(--dsw-alias-bg-layer-2)}' +
-      '.sa-tk-btn:disabled:hover{background:transparent}';
+      '.sa-tk-btn:disabled:hover{background:transparent}' +
+      '.sa-avatar-run{animation:sa-avatar-pulse 1.6s ease-out infinite}' +
+      '@keyframes sa-avatar-pulse{0%,100%{opacity:1}50%{opacity:.7}}';
 
-    function Dot({ color }) {
-      return h('span', { 'aria-hidden': true, style: { ...S.dot, background: color } });
+    // Avatar carries identity + state (Grok Bot: the avatar IS the status).
+    // A circle with the first character of the name on a muted tint; the 2px
+    // ring is the state (green running, none idle, dashed external). Running
+    // breathes (opacity pulse).
+    const AVATAR_TINTS = [
+      'rgba(94,106,210,0.16)',
+      'rgba(39,166,68,0.14)',
+      'rgba(240,191,0,0.16)',
+      'rgba(235,87,87,0.14)',
+      'rgba(60,174,254,0.14)',
+      'rgba(113,112,255,0.14)',
+    ];
+    function avatarTint(seed) {
+      const s = String(seed || '');
+      let hash = 0;
+      for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+      return AVATAR_TINTS[hash % AVATAR_TINTS.length];
+    }
+    function Avatar({ label, seed, size, state, pulse }) {
+      const initial = String(label || '?').trim().charAt(0) || '?';
+      const ring =
+        state === 'lost'
+          ? 'var(--dsw-alias-state-error-primary)'
+          : state === 'waiting'
+            ? 'var(--dsw-alias-state-warn-primary)'
+            : state === 'running'
+              ? 'var(--dsw-alias-state-success-primary)'
+              : 'transparent';
+      const style = {
+        ...S.avatar,
+        width: size,
+        height: size,
+        fontSize: size >= 32 ? 13 : 12,
+        borderRadius: state === 'lost' ? 8 : '50%',
+        background: avatarTint(seed),
+        boxShadow: ring === 'transparent' ? 'none' : '0 0 0 2px ' + ring,
+        opacity: state === 'idle' ? 0.55 : 1,
+        border: state === 'external' ? '1.5px dashed var(--dsw-alias-label-secondary)' : 'none',
+      };
+      return h(
+        'span',
+        { 'aria-hidden': true, className: pulse ? 'sa-avatar-run' : undefined, style },
+        initial,
+      );
     }
 
     /** Client projection face for one key on a retained Session. */
@@ -342,6 +389,7 @@ window.__ModuleLoader__.load({
       const [selected, setSelected] = React.useState(null);
       const [status, setStatus] = React.useState('');
       const [busy, setBusy] = React.useState(false);
+      const [phase, setPhase] = React.useState('pick');
 
       const fish = React.useMemo(() => deriveFish(list || {}, currentSessionId), [list, currentSessionId]);
       const shownFish = fish.slice(0, 5);
@@ -362,13 +410,14 @@ window.__ModuleLoader__.load({
       );
 
       const run = React.useCallback(
-        async (step, fn, okText) => {
+        async (step, fn, okText, onOk) => {
           if (busy) return;
           setBusy(true);
           try {
             const result = await fn();
             record(step, result);
             setStatus(typeof okText === 'function' ? okText(result) : okText);
+            if (typeof onOk === 'function') onOk(result);
           } catch (error) {
             const message = error && error.message ? String(error.message) : String(error);
             record(step, { status: 'failed', error: message });
@@ -404,12 +453,18 @@ window.__ModuleLoader__.load({
                       current && current.key === f.key
                         ? { ...S.fishRow, ...S.fishRowSelected }
                         : S.fishRow,
-                    onClick: () => setSelected(f.key),
+                    onClick: () => {
+                      setSelected(f.key);
+                      setPhase('pick');
+                      setStatus('');
+                    },
                   },
-                  h(Dot, {
-                    color: f.running
-                      ? 'var(--dsw-alias-state-success-primary)'
-                      : 'var(--dsw-alias-state-idle-primary)',
+                  h(Avatar, {
+                    label: f.label,
+                    seed: f.key,
+                    size: 32,
+                    state: f.external ? 'external' : f.running ? 'running' : 'idle',
+                    pulse: f.running,
                   }),
                   h('span', { style: S.fishName }, f.label),
                 ),
@@ -418,62 +473,79 @@ window.__ModuleLoader__.load({
             ),
         h(
           'div',
-          { style: S.btnRow },
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'sa-tk-btn',
-              style: { ...S.btn, ...S.btnDanger },
-              disabled: busy || !target,
-              onClick: () =>
-                run('停鱼', () => stopFish(sessions, target), (result) => stopStatus(result)),
-            },
-            t('panel.t1'),
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'sa-tk-btn',
-              style: S.btn,
-              disabled: busy,
-              onClick: () =>
-                run(
-                  '回执：等我改完',
-                  () =>
-                    callHost(ctx, 'appendReceipt', {
-                      sessionId: currentSessionId,
-                      text:
-                        '用户接管了' +
-                        (current ? current.label : '这条鱼') +
-                        '，正在改文件。先别派新鱼，等用户改完我再通知你。',
-                    }),
-                  '已告诉队长：等你改完',
+          { style: S.actionRow },
+          phase === 'pick'
+            ? h(
+                'button',
+                {
+                  type: 'button',
+                  className: 'sa-tk-btn',
+                  style:
+                    busy || !target
+                      ? { ...S.actionBtn, ...S.actionBtnDanger, ...S.actionBtnDisabled }
+                      : { ...S.actionBtn, ...S.actionBtnDanger },
+                  disabled: busy || !target,
+                  onClick: () =>
+                    run(
+                      '停鱼',
+                      () => stopFish(sessions, target),
+                      (result) => stopStatus(result),
+                      (result) => {
+                        if (result.status === 'stopped' || result.status === 'already-idle') setPhase('stopped');
+                      },
+                    ),
+                },
+                t('panel.t1'),
+              )
+            : phase === 'stopped'
+              ? h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'sa-tk-btn',
+                    style: busy ? { ...S.actionBtn, ...S.actionBtnDisabled } : S.actionBtn,
+                    disabled: busy,
+                    onClick: () =>
+                      run(
+                        '回执：等我改完',
+                        () =>
+                          callHost(ctx, 'appendReceipt', {
+                            sessionId: currentSessionId,
+                            text:
+                              '用户接管了' +
+                              (current ? current.label : '这条鱼') +
+                              '，正在改文件。先别派新鱼，等用户改完我再通知你。',
+                          }),
+                        '已告诉队长：等你改完',
+                        () => setPhase('waiting'),
+                      ),
+                  },
+                  t('panel.waitReceipt'),
+                )
+              : h(
+                  'button',
+                  {
+                    type: 'button',
+                    className: 'sa-tk-btn',
+                    style: busy ? { ...S.actionBtn, ...S.actionBtnDisabled } : S.actionBtn,
+                    disabled: busy,
+                    onClick: () =>
+                      run(
+                        '回执：改完了',
+                        () =>
+                          callHost(ctx, 'appendReceipt', {
+                            sessionId: currentSessionId,
+                            text: '用户改完了，接着写。派一条新鱼，接着我改完的地方写，别重写，别改、别删、别覆盖我改的内容。',
+                          }),
+                        () => '已交还队长',
+                        () => {
+                          setPhase('pick');
+                          setSelected(null);
+                        },
+                      ),
+                  },
+                  t('panel.doneReceipt'),
                 ),
-            },
-            t('panel.waitReceipt'),
-          ),
-          h(
-            'button',
-            {
-              type: 'button',
-              className: 'sa-tk-btn',
-              style: S.btn,
-              disabled: busy,
-              onClick: () =>
-                run(
-                  '回执：改完了',
-                  () =>
-                    callHost(ctx, 'appendReceipt', {
-                      sessionId: currentSessionId,
-                      text: '用户改完了，接着写。派一条新鱼，接着我改完的地方写，别重写，别改、别删、别覆盖我改的内容。',
-                    }),
-                  '已告诉队长：接着写',
-                ),
-            },
-            t('panel.doneReceipt'),
-          ),
         ),
         status ? h('div', { style: S.status, role: 'status' }, status) : null,
       );

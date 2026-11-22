@@ -73,12 +73,11 @@ window.__ModuleLoader__.load({
       card: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 12,
         marginTop: 6,
-        padding: '8px 12px',
-        border: '1px solid var(--dsw-alias-border-l1)',
-        borderRadius: 6,
-        background: 'var(--dsw-alias-bg-layer-1)',
+        padding: '4px 0',
+        border: 'none',
+        background: 'transparent',
         color: 'var(--dsw-alias-label-primary)',
         fontFamily: 'inherit',
         fontSize: 13,
@@ -119,8 +118,6 @@ window.__ModuleLoader__.load({
         display: 'flex',
         flexDirection: 'column',
         gap: 8,
-        paddingTop: 8,
-        borderTop: '1px solid var(--dsw-alias-border-l1)',
       },
       groupRow: {
         display: 'flex',
@@ -224,22 +221,22 @@ window.__ModuleLoader__.load({
       fishList: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 8,
+        gap: 4,
       },
       fishRow: {
         display: 'flex',
         alignItems: 'center',
-        gap: 8,
-        height: 28,
-        padding: '0 8px',
+        gap: 10,
+        height: 40,
+        padding: '4px 8px',
         borderRadius: 6,
         transition: 'background-color 150ms ease-out',
       },
       fishRowActive: {
         display: 'flex',
         alignItems: 'flex-start',
-        gap: 8,
-        padding: '10px 8px',
+        gap: 10,
+        padding: '6px 8px',
         borderRadius: 6,
         transition: 'background-color 150ms ease-out',
       },
@@ -247,12 +244,6 @@ window.__ModuleLoader__.load({
         display: 'flex',
         flexDirection: 'column',
         flex: '1 1 auto',
-        minWidth: 0,
-      },
-      fishLine1: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: 8,
         minWidth: 0,
       },
       fishName: {
@@ -269,7 +260,6 @@ window.__ModuleLoader__.load({
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
-        paddingLeft: 14,
         fontSize: 12,
         fontWeight: 400,
         lineHeight: '17px',
@@ -281,29 +271,49 @@ window.__ModuleLoader__.load({
         flex: 'none',
         alignSelf: 'center',
       },
-      dot: {
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
+      avatar: {
         flex: 'none',
-        display: 'inline-block',
-      },
-      dotHollow: {
-        width: 6,
-        height: 6,
-        borderRadius: '50%',
-        flex: 'none',
-        display: 'inline-block',
-        border: '1.5px solid var(--dsw-alias-label-secondary)',
-        background: 'transparent',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontWeight: 600,
+        lineHeight: 1,
+        color: 'var(--dsw-alias-label-primary)',
         boxSizing: 'border-box',
       },
-      dotSquare: {
-        width: 6,
-        height: 6,
-        borderRadius: 1,
-        flex: 'none',
-        display: 'inline-block',
+      askBox: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        marginTop: 4,
+        padding: '6px 8px',
+        borderRadius: 6,
+        background: 'var(--dsw-alias-bg-layer-2)',
+      },
+      askInput: {
+        flex: '1 1 auto',
+        minWidth: 0,
+        border: 'none',
+        outline: 'none',
+        background: 'transparent',
+        color: 'var(--dsw-alias-label-primary)',
+        font: 'inherit',
+        fontSize: 12,
+        lineHeight: '17px',
+        padding: 0,
+      },
+      askSend: {
+        font: 'inherit',
+        fontSize: 12,
+        fontWeight: 500,
+        lineHeight: '16px',
+        padding: '4px 8px',
+        borderRadius: 6,
+        border: 'none',
+        background: 'transparent',
+        color: 'var(--dsw-alias-label-primary)',
+        cursor: 'pointer',
+        whiteSpace: 'nowrap',
       },
       receipt: {
         display: 'flex',
@@ -349,8 +359,12 @@ window.__ModuleLoader__.load({
       '.sa-ft-btn:disabled:hover{background:transparent}' +
       '.sa-ft-btn-ask{opacity:0;transition:opacity 150ms ease-out}' +
       '.sa-ft-fishrow:hover .sa-ft-btn-ask{opacity:1}' +
-      '.sa-dot-run{animation:sa-pulse 1.6s ease-out infinite}' +
-      '@keyframes sa-pulse{0%,100%{opacity:1}50%{opacity:.35}}';
+      '.sa-ft-btn-stop{opacity:0;transition:opacity 150ms ease-out}' +
+      '.sa-ft-fishrow:hover .sa-ft-btn-stop{opacity:1}' +
+      '.sa-ft-btn-group{opacity:0;transition:opacity 150ms ease-out}' +
+      '.sa-ft-grouprow:hover .sa-ft-btn-group{opacity:1}' +
+      '.sa-avatar-run{animation:sa-avatar-pulse 1.6s ease-out infinite}' +
+      '@keyframes sa-avatar-pulse{0%,100%{opacity:1}50%{opacity:.7}}';
 
     /** Short stable display fallback for an opaque id. */
     function shortId(id) {
@@ -924,14 +938,51 @@ window.__ModuleLoader__.load({
       return groups;
     }
 
-    function Dot({ color, hollow, square, pulse }) {
-      if (hollow) return h('span', { 'aria-hidden': true, style: S.dotHollow });
-      if (square) return h('span', { 'aria-hidden': true, style: { ...S.dotSquare, background: color } });
-      return h('span', {
-        'aria-hidden': true,
-        className: pulse ? 'sa-dot-run' : undefined,
-        style: { ...S.dot, background: color },
-      });
+    // Avatar carries identity + state (Grok Bot: the avatar IS the status).
+    // A circle with the first character of the name on a muted tint; the 2px
+    // ring is the state (green running, amber waiting, red lost, none idle,
+    // dashed external). Lost also turns the circle into a rounded square —
+    // shape changes, not just color. Running breathes (opacity pulse).
+    const AVATAR_TINTS = [
+      'rgba(94,106,210,0.16)',
+      'rgba(39,166,68,0.14)',
+      'rgba(240,191,0,0.16)',
+      'rgba(235,87,87,0.14)',
+      'rgba(60,174,254,0.14)',
+      'rgba(113,112,255,0.14)',
+    ];
+    function avatarTint(seed) {
+      const s = String(seed || '');
+      let hash = 0;
+      for (let i = 0; i < s.length; i++) hash = (hash * 31 + s.charCodeAt(i)) >>> 0;
+      return AVATAR_TINTS[hash % AVATAR_TINTS.length];
+    }
+    function Avatar({ label, seed, size, state, pulse }) {
+      const initial = String(label || '?').trim().charAt(0) || '?';
+      const ring =
+        state === 'lost'
+          ? 'var(--dsw-alias-state-error-primary)'
+          : state === 'waiting'
+            ? 'var(--dsw-alias-state-warn-primary)'
+            : state === 'running'
+              ? 'var(--dsw-alias-state-success-primary)'
+              : 'transparent';
+      const style = {
+        ...S.avatar,
+        width: size,
+        height: size,
+        fontSize: size >= 32 ? 13 : 12,
+        borderRadius: state === 'lost' ? 8 : '50%',
+        background: avatarTint(seed),
+        boxShadow: ring === 'transparent' ? 'none' : '0 0 0 2px ' + ring,
+        opacity: state === 'idle' ? 0.55 : 1,
+        border: state === 'external' ? '1.5px dashed var(--dsw-alias-label-secondary)' : 'none',
+      };
+      return h(
+        'span',
+        { 'aria-hidden': true, className: pulse ? 'sa-avatar-run' : undefined, style },
+        initial,
+      );
     }
 
     /** Render one multi-line receipt/sentence block, first line emphasised. */
@@ -988,6 +1039,8 @@ window.__ModuleLoader__.load({
       const [busy, setBusy] = React.useState({});
       const [preparing, setPreparing] = React.useState({});
       const [recovered, setRecovered] = React.useState(null);
+      const [askFor, setAskFor] = React.useState(null);
+      const [askText, setAskText] = React.useState('');
 
       const previousRunning = React.useRef({});
       const busyRef = React.useRef({});
@@ -1258,16 +1311,15 @@ window.__ModuleLoader__.load({
       };
 
       // ── Ask one fish: prompt for a question, save it, post it, deliver it ──
-      // Minimal ask entry: window.prompt for the question text (no custom input
-      // UI); the question is saved durably (record, kind 'ask'), posted to the
-      // captain session as the "asked" receipt, delivered to the captain through
-      // session.prompt(), and the "answered" receipt is posted when prompt()
-      // resolves. The delivered text names the fish so the captain knows which
-      // fish the question is about.
-      const askFish = (group, fish) => {
+      // Ask entry is an inline message composer under the fish (Muse: ask a
+      // person, don't operate a console). The question is saved durably
+      // (record, kind 'ask'), posted to the captain session as the "asked"
+      // receipt, delivered to the captain through session.prompt(), and the
+      // "answered" receipt is posted when prompt() resolves. The delivered
+      // text names the fish so the captain knows which fish the question is about.
+      const askFish = (group, fish, question) => {
         if (fish.self || fish.external) return;
         const label = fish.label || fish.key;
-        const question = window.prompt('问' + label + '：', '');
         if (!question || !question.trim()) return;
         const q = question.trim();
         const id = 'ask-' + group.id + '-' + fish.key + '-' + Date.now();
@@ -1294,6 +1346,15 @@ window.__ModuleLoader__.load({
         }).catch((error) => {
           postHuman('没答上：' + label + ' - ' + String(error && error.message ? error.message : error)).catch(() => {});
         });
+      };
+
+      // Inline composer submit: send the typed question, then close the composer.
+      const submitAsk = (group, fish) => {
+        const q = askText.trim();
+        if (!q) return;
+        setAskFor(null);
+        setAskText('');
+        askFish(group, fish, q);
       };
 
       // ── Cancel: do nothing else, record the answer durably and leave a human note ─
@@ -1559,28 +1620,24 @@ window.__ModuleLoader__.load({
             { key: group.id, style: S.group },
             h(
               'div',
-              { style: S.groupRow },
+              { style: S.groupRow, className: 'sa-ft-grouprow' },
+              h(Avatar, {
+                label: group.title,
+                seed: group.id,
+                size: 28,
+                state: groupLost ? 'lost' : groupWaiting ? 'waiting' : group.active ? 'running' : 'idle',
+                pulse: group.active && !groupLost && !groupWaiting,
+              }),
               h(
                 'span',
                 { style: S.groupTitle, title: group.id },
-                h(Dot, {
-                  square: groupLost,
-                  pulse: group.active && !groupLost && !groupWaiting,
-                  color: groupLost
-                    ? 'var(--dsw-alias-state-error-primary)'
-                    : groupWaiting
-                      ? 'var(--dsw-alias-state-warn-primary)'
-                      : group.active
-                        ? 'var(--dsw-alias-state-success-primary)'
-                        : 'var(--dsw-alias-state-idle-primary)',
-                }),
                 h('span', { style: S.groupTitleText }, group.title),
               ),
               h(
                 'button',
                 {
                   type: 'button',
-                  className: 'sa-ft-btn',
+                  className: 'sa-ft-btn sa-ft-btn-group',
                   style: groupDisabled
                     ? { ...S.iconBtn, ...S.iconBtnDanger, ...S.iconBtnDisabled }
                     : { ...S.iconBtn, ...S.iconBtnDanger },
@@ -1619,26 +1676,25 @@ window.__ModuleLoader__.load({
                       className: 'sa-ft-fishrow',
                       style: showDetail ? S.fishRowActive : S.fishRow,
                     },
+                    h(Avatar, {
+                      label: fish.self ? t('fish.self') : fish.label,
+                      seed: fish.key,
+                      size: 32,
+                      state: fishLost
+                        ? 'lost'
+                        : fish.external
+                          ? 'external'
+                          : fishWaiting
+                            ? 'waiting'
+                            : fish.running
+                              ? 'running'
+                              : 'idle',
+                      pulse: fish.running && !fishLost && !fishWaiting,
+                    }),
                     h(
                       'div',
                       { style: S.fishText },
-                      h(
-                        'div',
-                        { style: S.fishLine1 },
-                        h(Dot, {
-                          square: fishLost,
-                          hollow: fish.external,
-                          pulse: fish.running && !fishLost && !fishWaiting,
-                          color: fishLost
-                            ? 'var(--dsw-alias-state-error-primary)'
-                            : fishWaiting
-                              ? 'var(--dsw-alias-state-warn-primary)'
-                              : fish.running
-                                ? 'var(--dsw-alias-state-success-primary)'
-                                : 'var(--dsw-alias-state-idle-primary)',
-                        }),
-                        h('span', { style: S.fishName, title: fish.key }, fish.self ? t('fish.self') : fish.label),
-                      ),
+                      h('span', { style: S.fishName, title: fish.key }, fish.self ? t('fish.self') : fish.label),
                       showDetail ? h('div', { style: S.fishDetail }, fish.detail) : null,
                     ),
                     fish.self || fish.external
@@ -1654,7 +1710,8 @@ window.__ModuleLoader__.load({
                               style: { ...S.iconBtn, ...S.iconBtnSecondary },
                               'aria-label': '问一句 — ' + fish.label,
                               onClick: () => {
-                                askFish(group, fish);
+                                setAskFor(scope);
+                                setAskText('');
                               },
                             },
                             h('span', { style: { fontSize: 13, fontWeight: 500, lineHeight: 1 } }, '?'),
@@ -1664,7 +1721,7 @@ window.__ModuleLoader__.load({
                                 'button',
                                 {
                                   type: 'button',
-                                  className: 'sa-ft-btn',
+                                  className: 'sa-ft-btn sa-ft-btn-stop',
                                   style: fishDisabled
                                     ? { ...S.iconBtn, ...S.iconBtnDanger, ...S.iconBtnDisabled }
                                     : { ...S.iconBtn, ...S.iconBtnDanger },
@@ -1679,6 +1736,36 @@ window.__ModuleLoader__.load({
                             : null,
                         ),
                   ),
+                  askFor === scope
+                    ? h(
+                        'div',
+                        { style: S.askBox },
+                        h('input', {
+                          type: 'text',
+                          value: askText,
+                          placeholder: '问' + (fish.self ? t('fish.self') : fish.label) + '…',
+                          style: S.askInput,
+                          autoFocus: true,
+                          onChange: (e) => setAskText(e.target.value),
+                          onKeyDown: (e) => {
+                            if (e.key === 'Enter') submitAsk(group, fish);
+                            if (e.key === 'Escape') {
+                              setAskFor(null);
+                              setAskText('');
+                            }
+                          },
+                        }),
+                        h(
+                          'button',
+                          {
+                            type: 'button',
+                            style: S.askSend,
+                            onClick: () => submitAsk(group, fish),
+                          },
+                          '发送',
+                        ),
+                      )
+                    : null,
                   renderConfirmBox(scope),
                   lost[scope] ? h('div', { style: S.lostBox, role: 'status' }, t('pending.lost')) : null,
                   receipts[scope] ? h(Receipt, { key: 'fish-receipt:' + scope, entry: receipts[scope], t }) : null,
