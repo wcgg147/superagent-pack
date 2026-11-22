@@ -14,19 +14,13 @@ window.__ModuleLoader__.load({
       'panel.total': '{groups} 组 · {fish} 条鱼',
       'panel.empty': '还没养鱼，说一句话开始。',
       'panel.hidden': '还有 {n} 条收起来了',
-      'group.running': '在跑',
-      'group.stopped': '已停',
       'group.stop': '先停下',
       'group.stopping': '在停…',
       'group.preparing': '记一下…',
       'group.confirmStop': '确定停',
       'group.cancel': '取消',
       'fish.self': '本组任务',
-      'fish.running': '在跑',
-      'fish.idle': '停着',
-      'fish.external': '外部执行',
       'fish.stop': '先停下',
-      'receipt.title': '回执',
       'receipt.captionNotified': '已通知',
       'receipt.captionCompleted': '已改完',
       'receipt.summary': '停了：{group}（{scope}）。{untouched}没动。',
@@ -59,10 +53,10 @@ window.__ModuleLoader__.load({
       'notify.groupOthers': '{group}这组已通知停下，{others}没动。',
       'notify.fish': '{fish}已通知停下。',
       'notify.fishOthers': '{fish}已通知停下，{others}不动。',
-      'pending.group': "要停'{group}'这组（{n} 条鱼）吗？确定吗？",
-      'pending.groupOthers': "要停'{group}'这组（{n} 条鱼）吗？{others}不动。确定吗？",
-      'pending.fish': "要停'{fish}'这条鱼吗？确定吗？",
-      'pending.fishOthers': "要停'{fish}'这条鱼吗？{others}不动。确定吗？",
+      'pending.group': "要停'{group}'这组（{n} 条鱼）吗？",
+      'pending.groupOthers': "要停'{group}'这组（{n} 条鱼）吗？{others}不动。",
+      'pending.fish': "要停'{fish}'这条鱼吗？",
+      'pending.fishOthers': "要停'{fish}'这条鱼吗？{others}不动。",
       'pending.resume': '刚才那个问题没答完，你继续',
       'pending.lost': '刚才问你的那个问题丢了，你再说一句',
       'pending.cancelled': '已取消。',
@@ -79,15 +73,15 @@ window.__ModuleLoader__.load({
       card: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 6,
+        gap: 8,
         marginTop: 6,
         padding: '8px 12px',
         border: '1px solid var(--dsw-alias-border-l1)',
-        borderRadius: 10,
+        borderRadius: 6,
         background: 'var(--dsw-alias-bg-layer-1)',
         color: 'var(--dsw-alias-label-primary)',
         fontFamily: 'inherit',
-        fontSize: 12,
+        fontSize: 13,
         lineHeight: '18px',
       },
       header: {
@@ -96,132 +90,196 @@ window.__ModuleLoader__.load({
         justifyContent: 'space-between',
         gap: 8,
       },
-      title: { fontWeight: 600 },
+      title: { fontSize: 13, fontWeight: 600, lineHeight: '18px' },
       total: {
         color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       empty: {
         color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       banner: {
-        padding: '5px 8px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-state-error-primary)',
-        background: 'var(--dsw-alias-bg-layer-2)',
         color: 'var(--dsw-alias-state-error-primary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       hiddenNote: {
         color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
-        paddingTop: 4,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       group: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 3,
-        paddingTop: 5,
+        gap: 8,
+        paddingTop: 8,
         borderTop: '1px solid var(--dsw-alias-border-l1)',
       },
       groupRow: {
-        display: 'grid',
-        gridTemplateColumns: 'minmax(0, 1fr) auto auto',
+        display: 'flex',
         alignItems: 'center',
-        columnGap: 10,
+        gap: 8,
+        height: 28,
       },
       groupTitle: {
         display: 'flex',
         alignItems: 'center',
-        gap: 6,
+        gap: 8,
         overflow: 'hidden',
-        textOverflow: 'ellipsis',
-        whiteSpace: 'nowrap',
+        flex: '1 1 auto',
+        minWidth: 0,
+        fontSize: 13,
         fontWeight: 600,
+        lineHeight: '18px',
       },
       groupTitleText: {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
       },
-      groupState: {
-        color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
-        whiteSpace: 'nowrap',
+      iconBtn: {
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 24,
+        height: 24,
+        padding: 0,
+        borderRadius: 6,
+        border: 'none',
+        background: 'transparent',
+        cursor: 'pointer',
+        flex: 'none',
+        transition: 'background-color 150ms ease-out',
       },
-      stop: {
+      iconBtnDanger: {
+        color: 'var(--dsw-alias-state-error-primary)',
+      },
+      iconBtnSecondary: {
+        color: 'var(--dsw-alias-label-secondary)',
+      },
+      iconBtnDisabled: {
+        opacity: 0.4,
+        cursor: 'default',
+      },
+      textBtn: {
         font: 'inherit',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 500,
         lineHeight: '16px',
-        padding: '2px 10px',
-        borderRadius: 999,
-        border: '1px solid var(--dsw-alias-border-l2)',
-        background: 'var(--dsw-alias-bg-layer-2)',
+        padding: '4px 10px',
+        borderRadius: 6,
+        border: 'none',
+        background: 'transparent',
         color: 'var(--dsw-alias-label-primary)',
         cursor: 'pointer',
         whiteSpace: 'nowrap',
+        transition: 'background-color 150ms ease-out',
       },
-      stopDisabled: {
-        opacity: 0.45,
-        cursor: 'default',
+      textBtnSecondary: {
+        color: 'var(--dsw-alias-label-secondary)',
       },
       confirmYes: {
         border: '1px solid var(--dsw-alias-state-error-primary)',
         color: 'var(--dsw-alias-state-error-primary)',
         fontWeight: 600,
       },
-      confirmNo: {},
       confirmBox: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 4,
-        padding: '5px 8px',
-        borderRadius: 8,
-        border: '1px solid var(--dsw-alias-border-l1)',
+        gap: 6,
+        padding: '8px 10px',
+        borderRadius: 6,
         background: 'var(--dsw-alias-bg-layer-2)',
       },
       confirmResume: {
         color: 'var(--dsw-alias-state-warn-primary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       confirmQuestion: {
         color: 'var(--dsw-alias-label-primary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 500,
+        lineHeight: '17px',
       },
       confirmRow: {
         display: 'flex',
-        gap: 8,
+        gap: 4,
         alignItems: 'center',
       },
       lostBox: {
-        padding: '5px 8px',
-        borderRadius: 8,
-        border: '1px dashed var(--dsw-alias-state-error-primary)',
         color: 'var(--dsw-alias-state-error-primary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
       },
       fishList: {
         display: 'flex',
         flexDirection: 'column',
-        gap: 2,
-        paddingLeft: 2,
+        gap: 8,
       },
       fishRow: {
-        display: 'grid',
-        gridTemplateColumns: 'auto minmax(0, 1fr) auto auto',
+        display: 'flex',
         alignItems: 'center',
-        columnGap: 7,
+        gap: 8,
+        height: 28,
+        padding: '0 8px',
+        borderRadius: 6,
+        transition: 'background-color 150ms ease-out',
+      },
+      fishRowActive: {
+        display: 'flex',
+        alignItems: 'flex-start',
+        gap: 8,
+        padding: '10px 8px',
+        borderRadius: 6,
+        transition: 'background-color 150ms ease-out',
+      },
+      fishText: {
+        display: 'flex',
+        flexDirection: 'column',
+        flex: '1 1 auto',
+        minWidth: 0,
+      },
+      fishLine1: {
+        display: 'flex',
+        alignItems: 'center',
+        gap: 8,
+        minWidth: 0,
       },
       fishName: {
         overflow: 'hidden',
         textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        flex: '1 1 auto',
+        minWidth: 0,
+        fontSize: 13,
+        fontWeight: 500,
+        lineHeight: '18px',
       },
-      fishState: {
-        color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
+      fishDetail: {
+        overflow: 'hidden',
+        textOverflow: 'ellipsis',
         whiteSpace: 'nowrap',
+        paddingLeft: 14,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
+        color: 'var(--dsw-alias-label-secondary)',
+      },
+      fishBtnGroup: {
+        display: 'flex',
+        gap: 4,
+        flex: 'none',
+        alignSelf: 'center',
       },
       dot: {
         width: 6,
@@ -230,49 +288,69 @@ window.__ModuleLoader__.load({
         flex: 'none',
         display: 'inline-block',
       },
+      dotHollow: {
+        width: 6,
+        height: 6,
+        borderRadius: '50%',
+        flex: 'none',
+        display: 'inline-block',
+        border: '1.5px solid var(--dsw-alias-label-secondary)',
+        background: 'transparent',
+        boxSizing: 'border-box',
+      },
+      dotSquare: {
+        width: 6,
+        height: 6,
+        borderRadius: 1,
+        flex: 'none',
+        display: 'inline-block',
+      },
       receipt: {
         display: 'flex',
         flexDirection: 'column',
         gap: 4,
-        marginTop: 2,
-        padding: '5px 8px',
-        borderRadius: 8,
+        padding: '8px 10px',
+        borderRadius: 6,
         background: 'var(--dsw-alias-bg-layer-2)',
-        border: '1px solid var(--dsw-alias-border-l1)',
       },
       receiptPart: {
         display: 'flex',
         flexDirection: 'column',
         gap: 2,
       },
-      receiptCaptionRow: {
-        display: 'flex',
-        alignItems: 'baseline',
-        justifyContent: 'space-between',
-        gap: 8,
-      },
       receiptCaption: {
-        color: 'var(--dsw-alias-label-primary)',
-        fontSize: 10,
-        fontWeight: 600,
-        letterSpacing: '0.02em',
-      },
-      receiptTime: {
-        color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 10,
-      },
-      receiptLineFirst: {
         color: 'var(--dsw-alias-label-primary)',
         fontSize: 11,
         fontWeight: 600,
+        letterSpacing: '0.04em',
+        lineHeight: '14px',
+      },
+      receiptLineFirst: {
+        color: 'var(--dsw-alias-label-primary)',
+        fontSize: 12,
+        fontWeight: 600,
+        lineHeight: '17px',
         wordBreak: 'break-word',
       },
       receiptLineText: {
         color: 'var(--dsw-alias-label-secondary)',
-        fontSize: 11,
+        fontSize: 12,
+        fontWeight: 400,
+        lineHeight: '17px',
         wordBreak: 'break-word',
       },
     };
+
+    // Hover is progressive enhancement: if the host strips the <style> tag
+    // the panel still works, it just has no hover fill.
+    const HOVER_CSS =
+      '.sa-ft-fishrow:hover{background:var(--dsw-alias-bg-layer-2)}' +
+      '.sa-ft-btn:hover{background:var(--dsw-alias-bg-layer-2)}' +
+      '.sa-ft-btn:disabled:hover{background:transparent}' +
+      '.sa-ft-btn-ask{opacity:0;transition:opacity 150ms ease-out}' +
+      '.sa-ft-fishrow:hover .sa-ft-btn-ask{opacity:1}' +
+      '.sa-dot-run{animation:sa-pulse 1.6s ease-out infinite}' +
+      '@keyframes sa-pulse{0%,100%{opacity:1}50%{opacity:.35}}';
 
     /** Short stable display fallback for an opaque id. */
     function shortId(id) {
@@ -741,6 +819,27 @@ window.__ModuleLoader__.load({
       return !!parentRunning;
     }
 
+    /** Short second line for a running fish: its current todo, else its turn count. */
+    function fishDetail(values) {
+      if (!values || typeof values !== 'object') return '';
+      const todos = Array.isArray(values.todos) ? values.todos : null;
+      if (todos) {
+        const active = todos.find(
+          (item) => item && item.status === 'in_progress' && typeof item.content === 'string' && item.content.trim().length > 0,
+        );
+        if (active) return active.content.trim();
+        const pending = todos.find(
+          (item) => item && item.status === 'pending' && typeof item.content === 'string' && item.content.trim().length > 0,
+        );
+        if (pending) return pending.content.trim();
+      }
+      const stats = values.sessionStats;
+      if (stats && typeof stats === 'object' && Number(stats.turns) > 0) {
+        return '第 ' + Number(stats.turns) + ' 轮';
+      }
+      return '';
+    }
+
     /** Best-effort: does this group's projection say something is waiting on the user? */
     function projectionDecision(values) {
       if (!values || typeof values !== 'object') return false;
@@ -788,6 +887,7 @@ window.__ModuleLoader__.load({
             external,
             self: false,
             running: fishIsRunning(childSummary, childValues, running),
+            detail: fishDetail(childValues),
             target: external
               ? null
               : {
@@ -824,8 +924,14 @@ window.__ModuleLoader__.load({
       return groups;
     }
 
-    function Dot({ color }) {
-      return h('span', { 'aria-hidden': true, style: { ...S.dot, background: color } });
+    function Dot({ color, hollow, square, pulse }) {
+      if (hollow) return h('span', { 'aria-hidden': true, style: S.dotHollow });
+      if (square) return h('span', { 'aria-hidden': true, style: { ...S.dotSquare, background: color } });
+      return h('span', {
+        'aria-hidden': true,
+        className: pulse ? 'sa-dot-run' : undefined,
+        style: { ...S.dot, background: color },
+      });
     }
 
     /** Render one multi-line receipt/sentence block, first line emphasised. */
@@ -840,17 +946,6 @@ window.__ModuleLoader__.load({
       );
     }
 
-    /** Format one timestamp as a short local clock. */
-    function formatClock(at) {
-      try {
-        const date = new Date(at);
-        const pad = (n) => String(n).padStart(2, '0');
-        return pad(date.getHours()) + ':' + pad(date.getMinutes()) + ':' + pad(date.getSeconds());
-      } catch (_error) {
-        return '';
-      }
-    }
-
     /** The two-sentence receipt block: 「已通知」 first, then 「已改完」. */
     function Receipt({ entry, t }) {
       return h(
@@ -860,12 +955,7 @@ window.__ModuleLoader__.load({
           ? h(
               'div',
               { style: S.receiptPart },
-              h(
-                'div',
-                { style: S.receiptCaptionRow },
-                h('span', { style: S.receiptCaption }, t('receipt.captionNotified')),
-                h('span', { style: S.receiptTime }, formatClock(entry.notified.at)),
-              ),
+              h('span', { style: S.receiptCaption }, t('receipt.captionNotified')),
               h(TextLines, { text: entry.notified.text }),
             )
           : null,
@@ -873,12 +963,7 @@ window.__ModuleLoader__.load({
           ? h(
               'div',
               { style: S.receiptPart },
-              h(
-                'div',
-                { style: S.receiptCaptionRow },
-                h('span', { style: S.receiptCaption }, t('receipt.captionCompleted')),
-                h('span', { style: S.receiptTime }, formatClock(entry.completed.at)),
-              ),
+              h('span', { style: S.receiptCaption }, t('receipt.captionCompleted')),
               h(TextLines, { text: entry.completed.text }),
             )
           : null,
@@ -1423,14 +1508,15 @@ window.__ModuleLoader__.load({
               'button',
               {
                 type: 'button',
-                style: { ...S.stop, ...S.confirmYes },
+                className: 'sa-ft-btn',
+                style: { ...S.textBtn, ...S.confirmYes },
                 onClick: () => confirmPending(scope),
               },
               t('group.confirmStop'),
             ),
             h(
               'button',
-              { type: 'button', style: { ...S.stop, ...S.confirmNo }, onClick: () => cancelPending(scope) },
+              { type: 'button', className: 'sa-ft-btn', style: { ...S.textBtn, ...S.textBtnSecondary }, onClick: () => cancelPending(scope) },
               t('group.cancel'),
             ),
           ),
@@ -1440,6 +1526,7 @@ window.__ModuleLoader__.load({
       return h(
         'section',
         { style: S.card, 'aria-label': t('panel.title') },
+        h('style', null, HOVER_CSS),
         h(
           'header',
           { style: S.header },
@@ -1455,6 +1542,8 @@ window.__ModuleLoader__.load({
           const groupPreparing = !!preparing[group.id];
           const groupBusy = !!busy[group.id];
           const groupDisabled = stopped || groupBusy || groupPreparing || !!groupConfirm;
+          const groupLost = !!lost[group.id] || group.fish.some((fish) => !!lost[fishScope(group.id, fish.key)]);
+          const groupWaiting = decision || groupBusy || groupPreparing;
           const fishToShow = (() => {
             if (group.fish.length <= 5) return group.fish;
             const pinned = group.fish.filter((fish) => {
@@ -1474,22 +1563,34 @@ window.__ModuleLoader__.load({
               h(
                 'span',
                 { style: S.groupTitle, title: group.id },
-                decision ? h(Dot, { color: 'var(--dsw-alias-state-error-primary)' }) : null,
+                h(Dot, {
+                  square: groupLost,
+                  pulse: group.active && !groupLost && !groupWaiting,
+                  color: groupLost
+                    ? 'var(--dsw-alias-state-error-primary)'
+                    : groupWaiting
+                      ? 'var(--dsw-alias-state-warn-primary)'
+                      : group.active
+                        ? 'var(--dsw-alias-state-success-primary)'
+                        : 'var(--dsw-alias-state-idle-primary)',
+                }),
                 h('span', { style: S.groupTitleText }, group.title),
               ),
-              h('span', { style: S.groupState }, stopped ? t('group.stopped') : t('group.running')),
               h(
                 'button',
                 {
                   type: 'button',
-                  style: groupDisabled ? { ...S.stop, ...S.stopDisabled } : S.stop,
+                  className: 'sa-ft-btn',
+                  style: groupDisabled
+                    ? { ...S.iconBtn, ...S.iconBtnDanger, ...S.iconBtnDisabled }
+                    : { ...S.iconBtn, ...S.iconBtnDanger },
                   disabled: groupDisabled,
                   'aria-label': t('group.stop') + ' — ' + group.title,
                   onClick: () => {
                     beginGroupConfirm(group);
                   },
                 },
-                groupBusy ? t('group.stopping') : groupPreparing ? t('group.preparing') : t('group.stop'),
+                h('span', { style: { fontSize: 11, lineHeight: 1 } }, '■'),
               ),
             ),
             renderConfirmBox(group.id),
@@ -1504,55 +1605,78 @@ window.__ModuleLoader__.load({
                 const fishConfirm = confirms[scope];
                 const fishBusy = !!busy[scope];
                 const fishPreparing = !!preparing[scope];
-                const fishDecision = !!fishConfirm || !!lost[scope];
+                const fishLost = !!lost[scope];
+                const fishWaiting = !!fishConfirm || fishBusy || fishPreparing;
+                const showStop = !fish.self && !fish.external && (fish.running || fishBusy || fishPreparing || !!fishConfirm);
+                const showDetail = fish.running && !!fish.detail;
                 const fishDisabled = fish.self || fish.external || !fish.running || fishBusy || fishPreparing || !!fishConfirm;
                 return h(
                   React.Fragment,
                   { key: fish.key },
                   h(
                     'div',
-                    { style: S.fishRow },
-                    h(Dot, {
-                      color: fishDecision
-                        ? 'var(--dsw-alias-state-error-primary)'
-                        : fish.running
-                          ? 'var(--dsw-alias-state-success-primary)'
-                          : 'var(--dsw-alias-state-idle-primary)',
-                    }),
-                    h('span', { style: S.fishName, title: fish.key }, fish.self ? t('fish.self') : fish.label),
+                    {
+                      className: 'sa-ft-fishrow',
+                      style: showDetail ? S.fishRowActive : S.fishRow,
+                    },
                     h(
-                      'span',
-                      { style: S.fishState },
-                      fish.external ? t('fish.external') : fish.running ? t('fish.running') : t('fish.idle'),
+                      'div',
+                      { style: S.fishText },
+                      h(
+                        'div',
+                        { style: S.fishLine1 },
+                        h(Dot, {
+                          square: fishLost,
+                          hollow: fish.external,
+                          pulse: fish.running && !fishLost && !fishWaiting,
+                          color: fishLost
+                            ? 'var(--dsw-alias-state-error-primary)'
+                            : fishWaiting
+                              ? 'var(--dsw-alias-state-warn-primary)'
+                              : fish.running
+                                ? 'var(--dsw-alias-state-success-primary)'
+                                : 'var(--dsw-alias-state-idle-primary)',
+                        }),
+                        h('span', { style: S.fishName, title: fish.key }, fish.self ? t('fish.self') : fish.label),
+                      ),
+                      showDetail ? h('div', { style: S.fishDetail }, fish.detail) : null,
                     ),
-                    fish.self
-                      ? null
-                      : h(
-                          'button',
-                          {
-                            type: 'button',
-                            style: fishDisabled ? { ...S.stop, ...S.stopDisabled } : S.stop,
-                            disabled: fishDisabled,
-                            'aria-label': t('fish.stop') + ' — ' + fish.label,
-                            onClick: () => {
-                              beginFishConfirm(group, fish);
-                            },
-                          },
-                          fishBusy ? t('group.stopping') : fishPreparing ? t('group.preparing') : t('fish.stop'),
-                        ),
                     fish.self || fish.external
                       ? null
                       : h(
-                          'button',
-                          {
-                            type: 'button',
-                            style: S.stop,
-                            'aria-label': '问一句 — ' + fish.label,
-                            onClick: () => {
-                              askFish(group, fish);
+                          'div',
+                          { style: S.fishBtnGroup },
+                          h(
+                            'button',
+                            {
+                              type: 'button',
+                              className: 'sa-ft-btn sa-ft-btn-ask',
+                              style: { ...S.iconBtn, ...S.iconBtnSecondary },
+                              'aria-label': '问一句 — ' + fish.label,
+                              onClick: () => {
+                                askFish(group, fish);
+                              },
                             },
-                          },
-                          '问一句',
+                            h('span', { style: { fontSize: 13, fontWeight: 500, lineHeight: 1 } }, '?'),
+                          ),
+                          showStop
+                            ? h(
+                                'button',
+                                {
+                                  type: 'button',
+                                  className: 'sa-ft-btn',
+                                  style: fishDisabled
+                                    ? { ...S.iconBtn, ...S.iconBtnDanger, ...S.iconBtnDisabled }
+                                    : { ...S.iconBtn, ...S.iconBtnDanger },
+                                  disabled: fishDisabled,
+                                  'aria-label': t('fish.stop') + ' — ' + fish.label,
+                                  onClick: () => {
+                                    beginFishConfirm(group, fish);
+                                  },
+                                },
+                                h('span', { style: { fontSize: 11, lineHeight: 1 } }, '■'),
+                              )
+                            : null,
                         ),
                   ),
                   renderConfirmBox(scope),
