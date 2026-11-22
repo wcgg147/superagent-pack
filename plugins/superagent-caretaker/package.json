@@ -1,0 +1,1 @@
+{"dsh":{"bundle":{"patch":"./cordis.patch.yml"}},"exports":{".":"./index.js","./icon":"./icon.svg","./locale/*.json":"./locale/*.json"},"files":["index.js","cordis.patch.yml","locale/*.json","icon.svg"],"name":"dsh-superagent-caretaker","peerDependencies":{"@deepseek-ai/dsh-llm":"*","@deepseek-ai/dsh-typert-protocol":"*"},"type":"module","version":"1.0.0"}

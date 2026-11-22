@@ -1,0 +1,3 @@
+- insert:
+    - id: superagent-caretaker
+      name: 'dsh-superagent-caretaker'

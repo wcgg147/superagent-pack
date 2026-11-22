@@ -1,0 +1,6 @@
+{
+  "meta": {
+    "title": "Fish tank",
+    "description": "Shows the real running task sessions below the composer as groups of fish, each group with a Stop now button, and writes the real stop receipt into the panel."
+  }
+}
